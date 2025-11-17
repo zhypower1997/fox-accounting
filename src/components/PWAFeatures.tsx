@@ -61,7 +61,7 @@ export default function PWAFeatures() {
       {showInstallPrompt && (
         <div className="bg-blue-600 text-white px-4 py-2 rounded-md shadow-md">
           <div className="flex items-center gap-2">
-            <span>📱 安装APP</span>
+            <span>安装逗逗狐记账APP</span>
             <button
               onClick={handleInstallClick}
               className="bg-white text-blue-600 px-2 py-1 rounded text-sm font-semibold hover:bg-gray-100"

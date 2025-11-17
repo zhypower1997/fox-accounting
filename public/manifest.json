@@ -1,6 +1,6 @@
 {
-  "name": "Fox Accounting",
-  "short_name": "Fox Accounting",
+  "name": "逗逗狐记账",
+  "short_name": "逗逗狐记账",
   "description": "离线记账APP",
   "start_url": "/",
   "display": "standalone",
