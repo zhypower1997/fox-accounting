@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BackButton from '@/components/BackButton';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export default function AddDetails() {
+function AddDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [amount, setAmount] = useState('');
@@ -120,7 +120,9 @@ export default function AddDetails() {
             </label>
             <DatePicker
               selected={selectedDate}
-              onChange={(date: Date) => setSelectedDate(date)}
+              onChange={(date: Date | null) => {
+                if (date) setSelectedDate(date);
+              }}
               dateFormat="yyyy-MM-dd"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -162,5 +164,19 @@ export default function AddDetails() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AddDetails() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-gray-500">加载中...</div>
+        </div>
+      }
+    >
+      <AddDetailsContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -64,7 +64,7 @@ const categories = [
   { type: 'income', name: '其他收入', icon: '💸', color: 'bg-gray-100' },
 ];
 
-export default function TransactionDetail() {
+function TransactionDetailContent() {
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const router = useRouter();
@@ -76,11 +76,11 @@ export default function TransactionDetail() {
       router.push('/');
       return;
     }
-    
+
     const savedTransactions = localStorage.getItem('transactions');
     if (savedTransactions) {
       const parsedTransactions: Transaction[] = JSON.parse(savedTransactions);
-      const foundTransaction = parsedTransactions.find(t => t.id === id);
+      const foundTransaction = parsedTransactions.find((t) => t.id === id);
       if (foundTransaction) {
         setTransaction(foundTransaction);
       } else {
@@ -99,10 +99,13 @@ export default function TransactionDetail() {
       const savedTransactions = localStorage.getItem('transactions');
       if (savedTransactions) {
         const parsedTransactions: Transaction[] = JSON.parse(savedTransactions);
-        const updatedTransactions = parsedTransactions.map(t => 
-          t.id === transaction.id ? transaction : t
+        const updatedTransactions = parsedTransactions.map((t) =>
+          t.id === transaction.id ? transaction : t,
         );
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        localStorage.setItem(
+          'transactions',
+          JSON.stringify(updatedTransactions),
+        );
       }
       setIsEditing(false);
     }
@@ -113,24 +116,33 @@ export default function TransactionDetail() {
       const savedTransactions = localStorage.getItem('transactions');
       if (savedTransactions) {
         const parsedTransactions: Transaction[] = JSON.parse(savedTransactions);
-        const updatedTransactions = parsedTransactions.filter(t => t.id !== transaction.id);
-        localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+        const updatedTransactions = parsedTransactions.filter(
+          (t) => t.id !== transaction.id,
+        );
+        localStorage.setItem(
+          'transactions',
+          JSON.stringify(updatedTransactions),
+        );
       }
       router.push('/');
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     if (transaction) {
       let value = e.target.value;
       // 处理amount字段为数字类型
       if (e.target.name === 'amount' && typeof value === 'string') {
-        value = parseFloat(value);
+        value = parseFloat(value).toString();
       }
-      
+
       setTransaction({
         ...transaction,
-        [e.target.name]: value
+        [e.target.name]: value,
       });
     }
   };
@@ -148,7 +160,7 @@ export default function TransactionDetail() {
   // 根据分类名称获取图标
   const getCategoryIcon = (categoryName: string) => {
     const category = categories.find((cat) => cat.name === categoryName);
-    
+
     if (category) {
       // 判断是图片路径还是emoji
       if (category.icon.startsWith('/')) {
@@ -165,7 +177,7 @@ export default function TransactionDetail() {
         return <span className="text-xl">{category.icon}</span>;
       }
     }
-    
+
     // 默认图标
     return <span className="text-xl">💸</span>;
   };
@@ -183,7 +195,7 @@ export default function TransactionDetail() {
           </h1>
         </div>
       </div>
-      
+
       <div className="max-w-md mx-auto p-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           {/* 分类和金额 */}
@@ -200,17 +212,20 @@ export default function TransactionDetail() {
                   className="flex-1 border rounded-lg p-2 text-lg"
                 >
                   {categories
-                    .filter(cat => cat.type === transaction.type)
-                    .map(cat => (
-                      <option key={cat.name} value={cat.name}>{cat.name}</option>
-                    ))
-                  }
+                    .filter((cat) => cat.type === transaction.type)
+                    .map((cat) => (
+                      <option key={cat.name} value={cat.name}>
+                        {cat.name}
+                      </option>
+                    ))}
                 </select>
               ) : (
-                <span className="text-xl font-medium">{transaction.category}</span>
+                <span className="text-xl font-medium">
+                  {transaction.category}
+                </span>
               )}
             </div>
-            
+
             {isEditing ? (
               <div className="mt-4">
                 <label className="block text-sm text-gray-600 mb-1">金额</label>
@@ -224,50 +239,63 @@ export default function TransactionDetail() {
                 />
               </div>
             ) : (
-              <div className={`text-2xl font-bold mt-3 ${
-                transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {transaction.type === 'income' ? '+' : '-'}¥{transaction.amount.toFixed(2)}
+              <div
+                className={`text-2xl font-bold mt-3 ${
+                  transaction.type === 'income'
+                    ? 'text-green-600'
+                    : 'text-red-600'
+                }`}
+              >
+                {transaction.type === 'income' ? '+' : '-'}¥
+                {transaction.amount.toFixed(2)}
               </div>
             )}
           </div>
-          
+
           <div className="space-y-4">
             {/* 交易类型 */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">交易类型</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                交易类型
+              </label>
               {isEditing ? (
                 <div className="flex gap-3 mb-2">
                   <button
                     className={`flex-1 py-2 px-4 rounded-lg ${
-                      transaction.type === 'expense' 
-                        ? 'bg-red-500 text-white' 
+                      transaction.type === 'expense'
+                        ? 'bg-red-500 text-white'
                         : 'bg-gray-200 text-gray-700'
                     }`}
-                    onClick={() => setTransaction({...transaction, type: 'expense'})}
+                    onClick={() =>
+                      setTransaction({ ...transaction, type: 'expense' })
+                    }
                   >
                     支出
                   </button>
                   <button
                     className={`flex-1 py-2 px-4 rounded-lg ${
-                      transaction.type === 'income' 
-                        ? 'bg-green-500 text-white' 
+                      transaction.type === 'income'
+                        ? 'bg-green-500 text-white'
                         : 'bg-gray-200 text-gray-700'
                     }`}
-                    onClick={() => setTransaction({...transaction, type: 'income'})}
+                    onClick={() =>
+                      setTransaction({ ...transaction, type: 'income' })
+                    }
                   >
                     收入
                   </button>
                 </div>
               ) : (
                 <div className="py-2 px-3 bg-gray-100 rounded-lg">
-                  {transaction.type === 'income' ? 
-                    <span className="text-green-600">收入</span> : 
-                    <span className="text-red-600">支出</span>}
+                  {transaction.type === 'income' ? (
+                    <span className="text-green-600">收入</span>
+                  ) : (
+                    <span className="text-red-600">支出</span>
+                  )}
                 </div>
               )}
             </div>
-            
+
             {/* 描述 */}
             <div>
               <label className="block text-sm text-gray-600 mb-1">备注</label>
@@ -281,11 +309,13 @@ export default function TransactionDetail() {
                 />
               ) : (
                 <div className="py-2 px-3 bg-gray-100 rounded-lg min-h-[40px]">
-                  {transaction.description || <span className="text-gray-400">无备注</span>}
+                  {transaction.description || (
+                    <span className="text-gray-400">无备注</span>
+                  )}
                 </div>
               )}
             </div>
-            
+
             {/* 日期 */}
             <div>
               <label className="block text-sm text-gray-600 mb-1">日期</label>
@@ -304,19 +334,19 @@ export default function TransactionDetail() {
               )}
             </div>
           </div>
-          
+
           {/* 操作按钮 */}
           <div className="mt-8 flex gap-3">
             {isEditing ? (
               <>
-                <button 
-                  onClick={handleSave} 
+                <button
+                  onClick={handleSave}
                   className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium"
                 >
                   保存
                 </button>
-                <button 
-                  onClick={() => setIsEditing(false)} 
+                <button
+                  onClick={() => setIsEditing(false)}
                   className="flex-1 bg-gray-200 text-gray-700 py-3 px-4 rounded-lg font-medium"
                 >
                   取消
@@ -324,14 +354,14 @@ export default function TransactionDetail() {
               </>
             ) : (
               <>
-                <button 
-                  onClick={handleEdit} 
+                <button
+                  onClick={handleEdit}
                   className="flex-1 bg-blue-600 text-white py-3 px-4 rounded-lg font-medium"
                 >
                   编辑
                 </button>
-                <button 
-                  onClick={handleDelete} 
+                <button
+                  onClick={handleDelete}
                   className="flex-1 bg-red-600 text-white py-3 px-4 rounded-lg font-medium"
                 >
                   删除
@@ -342,5 +372,21 @@ export default function TransactionDetail() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TransactionDetail() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+          <div className="text-center p-6">
+            <div className="animate-pulse text-gray-500">载入中...</div>
+          </div>
+        </div>
+      }
+    >
+      <TransactionDetailContent />
+    </Suspense>
   );
 }
