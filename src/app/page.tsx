@@ -193,7 +193,8 @@ export default function Home() {
     const now = new Date();
     const day = now.getDate().toString().padStart(2, '0');
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
-    return { day, monthDay: `${month}/${day}` };
+    const year = now.getFullYear().toString().slice(-2);
+    return { day, monthDay: `${year}/${month}` };
   };
 
   const { day, monthDay } = formatDate();
@@ -201,8 +202,8 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 pb-24">
       <div className="max-w-md mx-auto p-6">
         {/* 日期显示 - 左上角 */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4 w-32">
-          <div className="text-5xl font-bold text-gray-900 text-center leading-tight">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-4 w-24">
+          <div className="text-3xl font-bold text-gray-900 text-center leading-tight">
             {day}
           </div>
           <div className="text-lg text-gray-600 text-center mt-1">
@@ -234,12 +235,21 @@ export default function Home() {
 
           <div
             ref={scrollContainer}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
+            className="bg-white rounded-lg shadow-md overflow-hidden relative"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
+            style={{
+              maxHeight: '60vh',
+              overflowY: 'auto',
+            }}
           >
-            <div className="p-6">
+            <div
+              className="p-6 pt-6"
+              style={{
+                fontFamily: "'Courier New', monospace",
+              }}
+            >
               {/* 交易列表 */}
               <div className="space-y-3 mb-4">
                 {todayTransactions.length === 0 ? (
@@ -252,22 +262,39 @@ export default function Home() {
                       key={transaction.id}
                       className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50"
                       onClick={() => handleTransactionClick(transaction)}
+                      style={{
+                        letterSpacing: '0.03em',
+                        borderBottom: '1px dotted rgba(0,0,0,0.05)',
+                      }}
                     >
                       <div className="flex items-center flex-1">
                         <div className="w-8 h-8 flex items-center justify-center mr-3">
                           {getCategoryIcon(transaction.category)}
                         </div>
-                        <div className="font-medium text-gray-900">
+                        <div
+                          className="font-medium text-gray-800"
+                          style={{ fontFamily: "'Courier New', monospace" }}
+                        >
                           {transaction.category}
                         </div>
                       </div>
-                      <div className="text-gray-600 mx-4">1</div>
+                      <div
+                        className="text-gray-600 mx-4"
+                        style={{ fontFamily: "'Courier New', monospace" }}
+                      >
+                        x1
+                      </div>
                       <div
                         className={`font-medium ${
                           transaction.type === 'income'
                             ? 'text-green-600'
                             : 'text-red-600'
                         }`}
+                        style={{
+                          fontFamily: "'Courier New', monospace",
+                          textAlign: 'right',
+                          minWidth: '80px',
+                        }}
                       >
                         {transaction.type === 'income' ? '+' : '-'}¥
                         {transaction.amount.toFixed(2)}
@@ -277,23 +304,43 @@ export default function Home() {
                 )}
               </div>
 
-              {/* 虚线分隔 */}
-              <div className="border-t-2 border-dashed border-gray-300 my-4"></div>
-
               {/* 今日支出 */}
-              <div className="flex justify-between items-center py-2 mb-2">
-                <div className="font-medium text-gray-900">今日支出</div>
-                <div className="font-bold text-gray-900">
+              <div className="flex justify-between items-center mb-2">
+                <div
+                  className="font-medium text-gray-800"
+                  style={{ fontFamily: "'Courier New', monospace" }}
+                >
+                  今日支出
+                </div>
+                <div
+                  className="font-bold text-gray-900"
+                  style={{
+                    fontFamily: "'Courier New', monospace",
+                    letterSpacing: '0.05em',
+                  }}
+                >
                   ¥{todaySummary.expense.toFixed(2)}
                 </div>
               </div>
 
               {/* 虚线分隔 */}
-              <div className="border-t-2 border-dashed border-gray-300 my-4"></div>
+              <div
+                className="my-4 text-center text-gray-300"
+                style={{
+                  fontFamily: "'Courier New', monospace",
+                  fontSize: '8px',
+                  letterSpacing: '2px',
+                }}
+              >
+                - - - - - - - - - - - - - - - -
+              </div>
 
               {/* 今日结余 */}
-              <div className="flex justify-between items-center py-3">
-                <div className="text-lg font-medium text-gray-900">
+              <div className="flex justify-between items-center">
+                <div
+                  className="text-lg font-medium text-gray-800"
+                  style={{ fontFamily: "'Courier New', monospace" }}
+                >
                   今日结余
                 </div>
                 <div
@@ -302,6 +349,10 @@ export default function Home() {
                       ? 'text-green-600'
                       : 'text-red-600'
                   }`}
+                  style={{
+                    fontFamily: "'Courier New', monospace",
+                    letterSpacing: '0.05em',
+                  }}
                 >
                   {todaySummary.income - todaySummary.expense >= 0 ? '' : '-'}¥
                   {Math.abs(todaySummary.income - todaySummary.expense).toFixed(
@@ -311,8 +362,24 @@ export default function Home() {
               </div>
               {/* 底部装饰 */}
               <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="text-center text-gray-400 text-sm">
-                  小票时光机
+                <div
+                  className="text-center text-gray-400 text-sm"
+                  style={{
+                    fontFamily: "'Courier New', monospace",
+                    letterSpacing: '0.05em',
+                  }}
+                >
+                  *** 小票时光机 ***
+                </div>
+                <div
+                  className="mt-1 text-center text-gray-400 text-xs"
+                  style={{ fontFamily: "'Courier New', monospace" }}
+                >
+                  {new Date().toLocaleDateString('zh-CN')}{' '}
+                  {new Date().toLocaleTimeString('zh-CN', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </div>
               </div>
             </div>
@@ -336,7 +403,6 @@ export default function Home() {
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg mb-2">
               <span className="text-3xl text-white">+</span>
             </div>
-            <span className="text-sm font-medium text-gray-900">记账</span>
           </Link>
 
           {/* 分析按钮 */}
