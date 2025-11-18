@@ -202,7 +202,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 pb-24">
       <div className="max-w-md mx-auto p-6">
         {/* 日期显示 - 左上角 */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-4 w-24">
+        <div className="relative z-2 bg-white rounded-lg shadow-sm p-4 mb-4 w-24">
           <div className="text-3xl font-bold text-gray-900 text-center leading-tight">
             {day}
           </div>
@@ -210,6 +210,7 @@ export default function Home() {
             {monthDay}
           </div>
         </div>
+        <div className="absolute mb-6 bg-gray-100 overflow-hidden w-full h-[140px] z-1 top-0 left-0 right-0"></div>
 
         {/* 小票风格的交易记录卡片容器 */}
         <div
@@ -238,10 +239,11 @@ export default function Home() {
             className="bg-white rounded-lg shadow-md overflow-hidden relative"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
             style={{
               maxHeight: '60vh',
               overflowY: 'auto',
+              clipPath:
+                'polygon(0% 0%, 100% 0%, 100% calc(100% - 4px), 97.5% 100%, 95% calc(100% - 4px), 92.5% 100%, 90% calc(100% - 4px), 87.5% 100%, 85% calc(100% - 4px), 82.5% 100%, 80% calc(100% - 4px), 77.5% 100%, 75% calc(100% - 4px), 72.5% 100%, 70% calc(100% - 4px), 67.5% 100%, 65% calc(100% - 4px), 62.5% 100%, 60% calc(100% - 4px), 57.5% 100%, 55% calc(100% - 4px), 52.5% 100%, 50% calc(100% - 4px), 47.5% 100%, 45% calc(100% - 4px), 42.5% 100%, 40% calc(100% - 4px), 37.5% 100%, 35% calc(100% - 4px), 32.5% 100%, 30% calc(100% - 4px), 27.5% 100%, 25% calc(100% - 4px), 22.5% 100%, 20% calc(100% - 4px), 17.5% 100%, 15% calc(100% - 4px), 12.5% 100%, 10% calc(100% - 4px), 7.5% 100%, 5% calc(100% - 4px), 2.5% 100%, 0% calc(100% - 4px))',
             }}
           >
             <div
