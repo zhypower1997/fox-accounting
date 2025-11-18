@@ -247,9 +247,9 @@ export default function Home() {
 
       if (distance > 0) {
         e.preventDefault();
-        // 进一步减小最大下拉距离和触发刷新的阈值
-        setPullDistance(Math.min(distance * 0.4, 40));
-        if (distance > 35) {
+        // 减小最大下拉距离和触发刷新的阈值
+        setPullDistance(Math.min(distance * 0.3, 5));
+        if (distance > 80) {
           setIsPulling(true);
         }
       }
@@ -305,15 +305,15 @@ export default function Home() {
           className="relative"
           style={{
             transform: `translateY(${pullDistance - printProgress}%)`,
-            transition: isPulling ? 'none' : 'transform 0.5s linear',
+            transition: isPulling ? 'none' : 'transform 0.2s linear',
           }}
         >
           {pullDistance > 0 && (
             <div
               className="flex justify-center items-center bg-gray-100 rounded-t-lg"
               style={{
-                height: `${Math.min(pullDistance, 30)}px`,
-                marginBottom: '0px',
+                height: `${Math.min(pullDistance, 20)}px`,
+                marginBottom: '15px',
               }}
             >
               <div className="text-gray-400 text-xs">
@@ -327,6 +327,7 @@ export default function Home() {
             className="bg-white rounded-lg shadow-md overflow-hidden relative"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             style={{
               maxHeight: '60vh',
               overflowY: 'auto',
@@ -485,27 +486,27 @@ export default function Home() {
       </div>
 
       {/* 底部导航按钮 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-2 shadow-lg">
         <div className="max-w-md mx-auto flex justify-around items-center">
           {/* 账单按钮 */}
           <Link href="/records" className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-1">
-              <span className="text-2xl">📋</span>
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-1">
+              <img src="/images/icons/账单.png" className="w-10" alt="" />
             </div>
             <span className="text-xs text-gray-600">账单</span>
           </Link>
 
           {/* 记账按钮 - 最大 */}
           <Link href="/add" className="flex flex-col items-center -mt-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg mb-2">
+            <div className="w-20 h-20 bg-[#f66e4e] rounded-full flex items-center justify-center shadow-lg mb-2">
               <span className="text-3xl text-white">+</span>
             </div>
           </Link>
 
           {/* 分析按钮 */}
           <Link href="/analysis" className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-1">
-              <span className="text-2xl">📊</span>
+            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-1">
+              <img src="/images/icons/分析.png" className="w-10" alt="" />
             </div>
             <span className="text-xs text-gray-600">分析</span>
           </Link>
