@@ -3,54 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
-
-const categories = [
-  {
-    type: 'expense',
-    name: '餐饮',
-    icon: '/images/icons/番茄.png',
-    color: 'bg-red-100',
-  },
-  {
-    type: 'expense',
-    name: '交通',
-    icon: '/images/icons/萝卜.png',
-    color: 'bg-blue-100',
-  },
-  {
-    type: 'expense',
-    name: '购物',
-    icon: '/images/icons/萝卜丝.png',
-    color: 'bg-purple-100',
-  },
-  {
-    type: 'expense',
-    name: '娱乐',
-    icon: '/images/icons/萝卜块.png',
-    color: 'bg-pink-100',
-  },
-  {
-    type: 'expense',
-    name: '医疗',
-    icon: '/images/icons/萝卜片.png',
-    color: 'bg-green-100',
-  },
-  {
-    type: 'expense',
-    name: '教育',
-    icon: '/images/icons/葱.png',
-    color: 'bg-yellow-100',
-  },
-  {
-    type: 'income',
-    name: '工资',
-    icon: '/images/icons/鸡蛋.png',
-    color: 'bg-green-100',
-  },
-  { type: 'income', name: '奖金', icon: '🎁', color: 'bg-blue-100' },
-  { type: 'income', name: '投资', icon: '📈', color: 'bg-purple-100' },
-  { type: 'income', name: '其他收入', icon: '💸', color: 'bg-gray-100' },
-];
+import { categories } from '@/constants/categories';
 
 export default function AddTransaction() {
   const router = useRouter();
