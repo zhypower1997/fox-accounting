@@ -95,18 +95,76 @@ export default function Home() {
   const [todaySummary, setTodaySummary] = useState({ income: 0, expense: 0 });
   const [isPulling, setIsPulling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
+  const [printProgress, setPrintProgress] = useState(100);
+  const [audioEnabled, setAudioEnabled] = useState(false);
   const startY = useRef(0);
   const scrollContainer = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const router = useRouter();
 
   const handleTransactionClick = (transaction: Transaction) => {
     router.push(`/transaction?id=${transaction.id}`);
   };
-
   // 从localStorage加载数据
   useEffect(() => {
     loadData();
+
+    // 预加载音频
+    audioRef.current = new Audio('/sounds/print.mp3');
+    audioRef.current.volume = 0.4;
+    audioRef.current.preload = 'auto';
+
+    // 尝试自动播放音效
+    const playAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current
+          .play()
+          .then(() => {
+            setAudioEnabled(true);
+          })
+          .catch((error) => {
+            console.log(
+              'Auto-play blocked, waiting for user interaction:',
+              error,
+            );
+            setAudioEnabled(false);
+          });
+      }
+    };
+
+    // 延迟播放音效
+    setTimeout(() => {
+      playAudio();
+    }, 100);
+
+    // 创建小票打印效果
+    let progress = 100;
+    const interval = setInterval(() => {
+      if (progress <= 0) {
+        clearInterval(interval);
+      } else {
+        progress -= 2;
+        setPrintProgress(progress);
+      }
+    }, 20);
+    return () => clearInterval(interval);
   }, []);
+
+  // 用户交互时启用音频
+  const enableAudio = () => {
+    if (audioRef.current && !audioEnabled) {
+      audioRef.current.currentTime = 0;
+      audioRef.current
+        .play()
+        .then(() => {
+          setAudioEnabled(true);
+        })
+        .catch((error) => {
+          console.log('Audio playback failed:', error);
+        });
+    }
+  };
 
   const loadData = () => {
     const savedTransactions = localStorage.getItem('transactions');
@@ -199,7 +257,13 @@ export default function Home() {
 
   const { day, monthDay } = formatDate();
   return (
-    <div className="min-h-screen bg-gray-100 pb-24">
+    <div className="min-h-screen bg-gray-100 pb-24" onClick={enableAudio}>
+      {/* 音频提示 */}
+      {!audioEnabled && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg text-sm z-50 shadow-lg">
+          🔊 点击屏幕启用音效
+        </div>
+      )}
       <div className="max-w-md mx-auto p-6">
         {/* 日期显示 - 左上角 */}
         <div className="relative z-2 bg-white rounded-lg shadow-sm p-4 mb-4 w-24">
@@ -216,8 +280,8 @@ export default function Home() {
         <div
           className="relative"
           style={{
-            transform: `translateY(${pullDistance}px)`,
-            transition: isPulling ? 'none' : 'transform 0.3s ease-out',
+            transform: `translateY(${pullDistance - printProgress}%)`,
+            transition: isPulling ? 'none' : 'transform 0.5s linear',
           }}
         >
           {pullDistance > 0 && (
@@ -244,8 +308,15 @@ export default function Home() {
               overflowY: 'auto',
               clipPath:
                 'polygon(0% 0%, 100% 0%, 100% calc(100% - 4px), 97.5% 100%, 95% calc(100% - 4px), 92.5% 100%, 90% calc(100% - 4px), 87.5% 100%, 85% calc(100% - 4px), 82.5% 100%, 80% calc(100% - 4px), 77.5% 100%, 75% calc(100% - 4px), 72.5% 100%, 70% calc(100% - 4px), 67.5% 100%, 65% calc(100% - 4px), 62.5% 100%, 60% calc(100% - 4px), 57.5% 100%, 55% calc(100% - 4px), 52.5% 100%, 50% calc(100% - 4px), 47.5% 100%, 45% calc(100% - 4px), 42.5% 100%, 40% calc(100% - 4px), 37.5% 100%, 35% calc(100% - 4px), 32.5% 100%, 30% calc(100% - 4px), 27.5% 100%, 25% calc(100% - 4px), 22.5% 100%, 20% calc(100% - 4px), 17.5% 100%, 15% calc(100% - 4px), 12.5% 100%, 10% calc(100% - 4px), 7.5% 100%, 5% calc(100% - 4px), 2.5% 100%, 0% calc(100% - 4px))',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
             }}
           >
+            <style jsx>{`
+              div::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
             <div
               className="p-6 pt-6"
               style={{
