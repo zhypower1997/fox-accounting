@@ -176,9 +176,33 @@ export default function Home() {
     }
   };
 
+  // 日期格式化和比较的辅助函数
+  const normalizeDate = (dateStr: string): string => {
+    // 将 2025/11/18 和 2025-11-18 都转换为标准格式进行比较
+    if (dateStr.includes('/')) {
+      return dateStr.replace(/\//g, '-');
+    }
+    return dateStr;
+  };
+
+  const formatDateForDisplay = (date: Date): string => {
+    return date.toLocaleDateString('zh-CN'); // 保持 2025/11/18 格式用于显示
+  };
+
+  const formatDateForStorage = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`; // 使用 2025-11-18 格式存储
+  };
+
+  const isSameDate = (date1: string, date2: string): boolean => {
+    return normalizeDate(date1) === normalizeDate(date2);
+  };
+
   const filterTodayTransactions = (transactions: Transaction[]) => {
-    const today = new Date().toLocaleDateString('zh-CN');
-    const todayTrans = transactions.filter((t) => t.date === today);
+    const today = formatDateForStorage(new Date());
+    const todayTrans = transactions.filter((t) => isSameDate(t.date, today));
     setTodayTransactions(todayTrans);
 
     const summary = todayTrans.reduce(

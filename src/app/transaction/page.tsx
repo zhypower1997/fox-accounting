@@ -71,6 +71,20 @@ function TransactionDetailContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
 
+  // 日期格式化和转换的辅助函数
+  const normalizeDate = (dateStr: string): string => {
+    // 将 2025/11/18 和 2025-11-18 都转换为标准格式进行比较
+    if (dateStr.includes('/')) {
+      return dateStr.replace(/\//g, '-');
+    }
+    return dateStr;
+  };
+
+  const formatDateForStorage = (dateStr: string): string => {
+    // 确保日期格式为 yyyy-MM-dd
+    return normalizeDate(dateStr);
+  };
+
   useEffect(() => {
     if (!id) {
       router.push('/');
@@ -96,17 +110,24 @@ function TransactionDetailContent() {
 
   const handleSave = () => {
     if (transaction) {
+      // 确保日期格式一致性
+      const updatedTransaction = {
+        ...transaction,
+        date: formatDateForStorage(transaction.date),
+      };
+
       const savedTransactions = localStorage.getItem('transactions');
       if (savedTransactions) {
         const parsedTransactions: Transaction[] = JSON.parse(savedTransactions);
         const updatedTransactions = parsedTransactions.map((t) =>
-          t.id === transaction.id ? transaction : t,
+          t.id === transaction.id ? updatedTransaction : t,
         );
         localStorage.setItem(
           'transactions',
           JSON.stringify(updatedTransactions),
         );
       }
+      setTransaction(updatedTransaction);
       setIsEditing(false);
     }
   };

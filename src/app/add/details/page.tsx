@@ -33,13 +33,20 @@ function AddDetailsContent() {
       : [];
 
     // 创建新交易
+    const formatDateForStorage = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`; // 使用 2025-11-18 格式存储
+    };
+
     const newTransaction = {
       id: Date.now().toString(),
       type,
       amount: parseFloat(amount),
       category,
       description,
-      date: selectedDate.toLocaleDateString('zh-CN'),
+      date: formatDateForStorage(selectedDate),
     };
 
     // 保存交易

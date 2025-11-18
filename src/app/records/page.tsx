@@ -88,16 +88,37 @@ const getCategoryIcon = (categoryName: string) => {
   // 默认图标
   return <span className="text-xl">💸</span>;
 };
-
 export default function Records() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
   >([]);
-  const [filterType, setFilterType] = useState<'all' | 'income' | 'expense'>(
-    'all',
-  );
-  const [selectedDate, setSelectedDate] = useState('');
+  // 获取今天的日期字符串 (yyyy-mm-dd 格式)
+  const getTodayDateString = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [selectedDate, setSelectedDate] = useState(getTodayDateString());
+  const [filterType, setFilterType] = useState('all');
+
+  // 日期格式化和比较的辅助函数
+  const normalizeDate = (dateStr: string): string => {
+    // 将 2025/11/18 和 2025-11-18 都转换为标准格式进行比较
+    if (dateStr.includes('/')) {
+      return dateStr.replace(/\//g, '-');
+    }
+    return dateStr;
+  };
+
+  const isSameDate = (date1: string, date2: string): boolean => {
+    return normalizeDate(date1) === normalizeDate(date2);
+  };
 
   useEffect(() => {
     const savedTransactions = localStorage.getItem('transactions');
@@ -116,7 +137,7 @@ export default function Records() {
     }
 
     if (selectedDate) {
-      filtered = filtered.filter((t) => t.date === selectedDate);
+      filtered = filtered.filter((t) => isSameDate(t.date, selectedDate));
     }
 
     setFilteredTransactions(filtered);
@@ -133,13 +154,31 @@ export default function Records() {
       .filter((t) => t.type === type)
       .reduce((sum, t) => sum + t.amount, 0);
   };
-
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+    try {
+      // 处理不同的日期格式
+      const normalizedDate = normalizeDate(dateStr);
+
+      // 如果是 yyyy-mm-dd 格式，直接返回
+      if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
+        return normalizedDate;
+      }
+
+      const date = new Date(normalizedDate);
+
+      // 检查日期是否有效
+      if (isNaN(date.getTime())) {
+        return dateStr; // 如果日期无效，返回原字符串
+      }
+
+      // 格式化为 yyyy-mm-dd
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      return dateStr; // 出错时返回原字符串
+    }
   };
 
   return (
@@ -192,13 +231,30 @@ export default function Records() {
             </button>
           </div>
 
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="选择日期"
-          />
+          <div className="relative flex gap-2">
+            <input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={() => setSelectedDate(getTodayDateString())}
+              className="px-3 py-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 text-sm font-medium"
+              title="查看今天"
+            >
+              今天
+            </button>
+            {selectedDate !== getTodayDateString() && (
+              <button
+                onClick={() => setSelectedDate('')}
+                className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm font-medium"
+                title="查看全部"
+              >
+                全部
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 统计信息 */}
