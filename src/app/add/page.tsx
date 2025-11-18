@@ -5,13 +5,48 @@ import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
 
 const categories = [
-  { type: 'expense', name: '餐饮', icon: '🍽️', color: 'bg-red-100' },
-  { type: 'expense', name: '交通', icon: '🚗', color: 'bg-blue-100' },
-  { type: 'expense', name: '购物', icon: '🛍️', color: 'bg-purple-100' },
-  { type: 'expense', name: '娱乐', icon: '🎬', color: 'bg-pink-100' },
-  { type: 'expense', name: '医疗', icon: '🏥', color: 'bg-green-100' },
-  { type: 'expense', name: '教育', icon: '📚', color: 'bg-yellow-100' },
-  { type: 'income', name: '工资', icon: '💰', color: 'bg-green-100' },
+  {
+    type: 'expense',
+    name: '餐饮',
+    icon: '/images/icons/番茄.png',
+    color: 'bg-red-100',
+  },
+  {
+    type: 'expense',
+    name: '交通',
+    icon: '/images/icons/萝卜.png',
+    color: 'bg-blue-100',
+  },
+  {
+    type: 'expense',
+    name: '购物',
+    icon: '/images/icons/萝卜丝.png',
+    color: 'bg-purple-100',
+  },
+  {
+    type: 'expense',
+    name: '娱乐',
+    icon: '/images/icons/萝卜块.png',
+    color: 'bg-pink-100',
+  },
+  {
+    type: 'expense',
+    name: '医疗',
+    icon: '/images/icons/萝卜片.png',
+    color: 'bg-green-100',
+  },
+  {
+    type: 'expense',
+    name: '教育',
+    icon: '/images/icons/葱.png',
+    color: 'bg-yellow-100',
+  },
+  {
+    type: 'income',
+    name: '工资',
+    icon: '/images/icons/鸡蛋.png',
+    color: 'bg-green-100',
+  },
   { type: 'income', name: '奖金', icon: '🎁', color: 'bg-blue-100' },
   { type: 'income', name: '投资', icon: '📈', color: 'bg-purple-100' },
   { type: 'income', name: '其他收入', icon: '💸', color: 'bg-gray-100' },
@@ -80,7 +115,7 @@ export default function AddTransaction() {
                 onClick={() => handleCategorySelect(category.name)}
                 className={`p-4 rounded-xl flex flex-col items-center justify-center transition-all hover:scale-105 ${category.color}`}
               >
-                <span className="text-2xl mb-2">{category.icon}</span>
+                <img src={category.icon} alt="" className="w-10 h-10 mb-2" />
                 <span className="text-sm font-medium text-gray-900">
                   {category.name}
                 </span>

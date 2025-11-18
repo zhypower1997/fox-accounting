@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface Transaction {
   id: string;
@@ -12,6 +14,80 @@ interface Transaction {
   date: string;
 }
 
+// 分类图标配置（与 add/page.tsx 保持一致）
+const categories = [
+  {
+    type: 'expense',
+    name: '餐饮',
+    icon: '/images/icons/番茄.png',
+    color: 'bg-red-100',
+  },
+  {
+    type: 'expense',
+    name: '交通',
+    icon: '/images/icons/萝卜.png',
+    color: 'bg-blue-100',
+  },
+  {
+    type: 'expense',
+    name: '购物',
+    icon: '/images/icons/萝卜丝.png',
+    color: 'bg-purple-100',
+  },
+  {
+    type: 'expense',
+    name: '娱乐',
+    icon: '/images/icons/萝卜块.png',
+    color: 'bg-pink-100',
+  },
+  {
+    type: 'expense',
+    name: '医疗',
+    icon: '/images/icons/萝卜片.png',
+    color: 'bg-green-100',
+  },
+  {
+    type: 'expense',
+    name: '教育',
+    icon: '/images/icons/葱.png',
+    color: 'bg-yellow-100',
+  },
+  {
+    type: 'income',
+    name: '工资',
+    icon: '/images/icons/鸡蛋.png',
+    color: 'bg-green-100',
+  },
+  { type: 'income', name: '奖金', icon: '🎁', color: 'bg-blue-100' },
+  { type: 'income', name: '投资', icon: '📈', color: 'bg-purple-100' },
+  { type: 'income', name: '其他收入', icon: '💸', color: 'bg-gray-100' },
+];
+
+// 根据分类名称获取图标
+const getCategoryIcon = (categoryName: string) => {
+  const category = categories.find((cat) => cat.name === categoryName);
+
+  if (category) {
+    // 判断是图片路径还是emoji
+    if (category.icon.startsWith('/')) {
+      return (
+        <img
+          src={category.icon}
+          alt={categoryName}
+          width={24}
+          height={24}
+          className="rounded-full"
+        />
+      );
+    } else {
+      return <span className="text-xl">{category.icon}</span>;
+    }
+  }
+
+  // 默认图标
+  return <span className="text-xl">💸</span>;
+};
+
 export default function Home() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [balance, setBalance] = useState(0);
@@ -21,6 +97,11 @@ export default function Home() {
   const [pullDistance, setPullDistance] = useState(0);
   const startY = useRef(0);
   const scrollContainer = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+
+  const handleTransactionClick = (transaction: Transaction) => {
+    router.push(`/transaction?id=${transaction.id}`);
+  };
 
   // 从localStorage加载数据
   useEffect(() => {
@@ -169,10 +250,16 @@ export default function Home() {
                   todayTransactions.map((transaction) => (
                     <div
                       key={transaction.id}
-                      className="flex justify-between items-center py-2"
+                      className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50"
+                      onClick={() => handleTransactionClick(transaction)}
                     >
-                      <div className="flex-1 font-medium text-gray-900">
-                        {transaction.category}
+                      <div className="flex items-center flex-1">
+                        <div className="w-8 h-8 flex items-center justify-center mr-3">
+                          {getCategoryIcon(transaction.category)}
+                        </div>
+                        <div className="font-medium text-gray-900">
+                          {transaction.category}
+                        </div>
                       </div>
                       <div className="text-gray-600 mx-4">1</div>
                       <div
@@ -247,7 +334,7 @@ export default function Home() {
           {/* 记账按钮 - 最大 */}
           <Link href="/add" className="flex flex-col items-center -mt-6">
             <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg mb-2">
-              <span className="text-3xl text-white">➕</span>
+              <span className="text-3xl text-white">+</span>
             </div>
             <span className="text-sm font-medium text-gray-900">记账</span>
           </Link>
