@@ -259,11 +259,11 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 pb-24" onClick={enableAudio}>
       {/* 音频提示 */}
-      {!audioEnabled && (
+      {/* {!audioEnabled && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-2 rounded-lg text-sm z-50 shadow-lg">
           🔊 点击屏幕启用音效
         </div>
-      )}
+      )} */}
       <div className="max-w-md mx-auto p-6">
         {/* 日期显示 - 左上角 */}
         <div className="relative z-2 bg-white rounded-lg shadow-sm p-4 mb-4 w-24">
