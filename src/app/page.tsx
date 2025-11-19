@@ -5,7 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getCategoryIcon } from '@/constants/categories';
+import { categories } from '@/constants/categories';
 import ReceiptPoster from '@/components/ReceiptPoster';
+import QuickEntryPanel from '@/components/QuickEntryPanel';
 
 interface Transaction {
   id: string;
@@ -26,6 +28,10 @@ export default function Home() {
   const [printProgress, setPrintProgress] = useState(100);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [showPoster, setShowPoster] = useState(false);
+  const [showQuickEntry, setShowQuickEntry] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [editingTransaction, setEditingTransaction] =
+    useState<Transaction | null>(null);
   const startY = useRef(0);
   const scrollContainer = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -39,7 +45,44 @@ export default function Home() {
       isLongPress.current = false;
       return;
     }
-    router.push(`/transaction?id=${transaction.id}`);
+    setSelectedCategory(transaction.category);
+    setEditingTransaction(transaction);
+    setShowQuickEntry(true);
+  };
+  const handleQuickEntrySubmit = (
+    amount: number,
+    description: string,
+    category: string,
+    type: 'income' | 'expense',
+    transactionId?: string,
+  ) => {
+    let updatedTransactions: Transaction[];
+
+    if (transactionId) {
+      // 编辑现有交易
+      updatedTransactions = transactions.map((t) =>
+        t.id === transactionId
+          ? { ...t, amount, description, category, type }
+          : t,
+      );
+    } else {
+      // 创建新交易
+      const newTransaction: Transaction = {
+        id: Date.now().toString(),
+        type,
+        amount,
+        category,
+        description,
+        date: formatDateForStorage(new Date()),
+      };
+      updatedTransactions = [newTransaction, ...transactions];
+    }
+
+    setTransactions(updatedTransactions);
+    localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+    calculateBalance(updatedTransactions);
+    filterTodayTransactions(updatedTransactions);
+    setEditingTransaction(null);
   };
 
   // 长按事件处理
@@ -130,6 +173,17 @@ export default function Home() {
       calculateBalance(parsedTransactions);
       filterTodayTransactions(parsedTransactions);
     }
+  };
+
+  // 删除
+  const handleQuickEntryDelete = (id: string) => {
+    const newTransactions = transactions.filter((t) => t.id !== id);
+    setTransactions(newTransactions);
+    localStorage.setItem('transactions', JSON.stringify(newTransactions));
+    calculateBalance(newTransactions);
+    filterTodayTransactions(newTransactions);
+    setShowQuickEntry(false);
+    setEditingTransaction(null);
   };
 
   // 日期格式化和比较的辅助函数
@@ -460,6 +514,23 @@ export default function Home() {
         transactions={todayTransactions}
         todaySummary={todaySummary}
         getCategoryIcon={getCategoryIcon}
+      />
+
+      {/* 快速记账面板 */}
+      <QuickEntryPanel
+        isOpen={showQuickEntry}
+        onClose={() => {
+          setShowQuickEntry(false);
+          setEditingTransaction(null);
+        }}
+        onDelete={handleQuickEntryDelete}
+        selectedCategory={selectedCategory}
+        initialAmount={editingTransaction?.amount}
+        initialDescription={editingTransaction?.description}
+        initialType={editingTransaction?.type}
+        transactionId={editingTransaction?.id}
+        onSubmit={handleQuickEntrySubmit}
+        categories={categories.map((cat) => cat.name)}
       />
 
       {/* 底部导航按钮 */}

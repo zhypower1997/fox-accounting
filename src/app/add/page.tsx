@@ -1,23 +1,72 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BackButton from '@/components/BackButton';
 import { categories } from '@/constants/categories';
+import QuickEntryPanel from '@/components/QuickEntryPanel';
+
+interface Transaction {
+  id: string;
+  type: 'income' | 'expense';
+  amount: number;
+  category: string;
+  description: string;
+  date: string;
+}
 
 export default function AddTransaction() {
   const router = useRouter();
   const [selectedType, setSelectedType] = useState<'income' | 'expense'>(
     'expense',
   );
+  const [showQuickEntry, setShowQuickEntry] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('');
 
-  const handleCategorySelect = (category: string) => {
-    router.push(
-      `/add/details?category=${encodeURIComponent(
-        category,
-      )}&type=${selectedType}`,
-    );
+  const handleCategorySelect = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    setShowQuickEntry(true);
   };
+
+  const handleQuickEntrySubmit = (
+    amount: number,
+    description: string,
+    category: string,
+    type: 'income' | 'expense',
+  ) => {
+    // 获取现有交易记录
+    const savedTransactions = localStorage.getItem('transactions');
+    const transactions: Transaction[] = savedTransactions
+      ? JSON.parse(savedTransactions)
+      : [];
+
+    // 创建新交易
+    const newTransaction: Transaction = {
+      id: Date.now().toString(),
+      type,
+      amount,
+      category,
+      description,
+      date: formatDateForStorage(new Date()),
+    };
+
+    // 保存到本地存储
+    const updatedTransactions = [newTransaction, ...transactions];
+    localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+
+    // 返回首页
+    router.push('/');
+  };
+
+  const formatDateForStorage = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // 获取所有分类名称用于分类选择器
+  const categoryNames = categories.map((cat) => cat.name);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -75,6 +124,16 @@ export default function AddTransaction() {
               </button>
             ))}
         </div>
+
+        {/* 快速记账面板 */}
+        <QuickEntryPanel
+          isOpen={showQuickEntry}
+          onClose={() => setShowQuickEntry(false)}
+          selectedCategory={selectedCategory}
+          initialType={selectedType}
+          onSubmit={handleQuickEntrySubmit}
+          categories={categoryNames}
+        />
       </div>
     </div>
   );
