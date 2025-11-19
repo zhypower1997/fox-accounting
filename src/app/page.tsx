@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getCategoryIcon } from '@/constants/categories';
+import ReceiptPoster from '@/components/ReceiptPoster';
 
 interface Transaction {
   id: string;
@@ -24,13 +25,41 @@ export default function Home() {
   const [pullDistance, setPullDistance] = useState(0);
   const [printProgress, setPrintProgress] = useState(100);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [showPoster, setShowPoster] = useState(false);
   const startY = useRef(0);
   const scrollContainer = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const isLongPress = useRef(false);
   const router = useRouter();
 
   const handleTransactionClick = (transaction: Transaction) => {
+    // 如果是长按，不触发跳转
+    if (isLongPress.current) {
+      isLongPress.current = false;
+      return;
+    }
     router.push(`/transaction?id=${transaction.id}`);
+  };
+
+  // 长按事件处理
+  const handleLongPressStart = (e: React.TouchEvent | React.MouseEvent) => {
+    isLongPress.current = false;
+    longPressTimer.current = setTimeout(() => {
+      isLongPress.current = true;
+      setShowPoster(true);
+      // 触发震动反馈（如果设备支持）
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 500); // 500ms后触发长按
+  };
+
+  const handleLongPressEnd = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
   };
   // 从localStorage加载数据
   useEffect(() => {
@@ -252,9 +281,21 @@ export default function Home() {
           <div
             ref={scrollContainer}
             className="bg-white rounded-lg shadow-md overflow-hidden relative"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            onTouchStart={(e) => {
+              handleTouchStart(e);
+              handleLongPressStart(e);
+            }}
+            onTouchMove={(e) => {
+              handleTouchMove(e);
+              handleLongPressEnd();
+            }}
+            onTouchEnd={(e) => {
+              handleTouchEnd();
+              handleLongPressEnd();
+            }}
+            onMouseDown={handleLongPressStart}
+            onMouseUp={handleLongPressEnd}
+            onMouseLeave={handleLongPressEnd}
             style={{
               maxHeight: '60vh',
               overflowY: 'auto',
@@ -411,6 +452,15 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* 海报弹窗 */}
+      <ReceiptPoster
+        isOpen={showPoster}
+        onClose={() => setShowPoster(false)}
+        transactions={todayTransactions}
+        todaySummary={todaySummary}
+        getCategoryIcon={getCategoryIcon}
+      />
 
       {/* 底部导航按钮 */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-2 shadow-lg">

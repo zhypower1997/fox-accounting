@@ -17,7 +17,7 @@ export const categories: Category[] = [
   {
     type: 'expense',
     name: '交通',
-    icon: '/images/icons/萝卜.png',
+    icon: '/images/icons/交通.png',
     color: 'bg-blue-100',
   },
   {
