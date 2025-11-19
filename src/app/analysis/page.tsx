@@ -415,7 +415,7 @@ export default function Analysis() {
       {/* 头部 */}
       <div className="bg-white shadow-sm p-4">
         <div className="max-w-4xl mx-auto relative">
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
             <BackButton variant="minimal" />
           </div>
           <h1 className="text-2xl font-bold text-center text-gray-900">

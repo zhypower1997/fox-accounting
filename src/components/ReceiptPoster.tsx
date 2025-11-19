@@ -173,10 +173,6 @@ export default function ReceiptPoster({
         alignItems: 'center',
         justifyContent: 'center',
         padding: '16px',
-        userSelect: 'none',
-        WebkitUserSelect: 'none',
-        MozUserSelect: 'none',
-        msUserSelect: 'none',
       }}
       onClick={handleClose}
     >
@@ -189,275 +185,271 @@ export default function ReceiptPoster({
           width: '100%',
           display: 'flex',
           flexDirection: 'column',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          MozUserSelect: 'none',
-          msUserSelect: 'none',
         }}
       >
-        {/* 海报内容 */}
-        <div
-          ref={posterRef}
-          style={{
-            fontFamily: "'Courier New', monospace",
-            backgroundColor: '#ffffff',
-            padding: '16px',
-            color: '#1f2937',
-            display: 'flex',
-            flexDirection: 'column',
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            msUserSelect: 'none',
-            position: 'relative',
-          }}
-        >
-          {/* 顶部日期和标题 */}
-          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <div
-              style={{
-                fontSize: '28px',
-                fontWeight: 'bold',
-                color: '#111827',
-                marginBottom: '4px',
-              }}
-            >
-              {day}
-            </div>
-            <div
-              style={{
-                fontSize: '16px',
-                color: '#4b5563',
-                marginBottom: '12px',
-              }}
-            >
-              {monthDay}
-            </div>
-            <div
-              style={{
-                fontSize: '18px',
-                fontWeight: 'bold',
-                color: '#374151',
-                marginBottom: '6px',
-              }}
-            >
-              *** 小票时光机 ***
-            </div>
-            <div
-              style={{
-                fontSize: '12px',
-                color: '#6b7280',
-              }}
-            >
-              {new Date().toLocaleDateString('zh-CN')}{' '}
-              {new Date().toLocaleTimeString('zh-CN', {
-                hour: '2-digit',
-                minute: '2-digit',
-              })}
-            </div>
-          </div>
-
-          {/* 分隔线 */}
+        <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+          {/* 海报内容 */}
           <div
+            ref={posterRef}
             style={{
-              borderTop: '1px dashed #d1d5db',
-              margin: '12px 0',
-            }}
-          ></div>
-
-          {/* 交易列表 */}
-          <div
-            style={{
-              marginBottom: '24px',
+              fontFamily: "'Courier New', monospace",
+              backgroundColor: '#ffffff',
+              padding: '16px',
+              color: '#1f2937',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
             }}
           >
-            {transactions.length === 0 ? (
+            {/* 顶部日期和标题 */}
+            <div style={{ textAlign: 'center', marginBottom: '16px' }}>
               <div
                 style={{
-                  textAlign: 'center',
-                  padding: '24px 0',
-                  color: '#9ca3af',
+                  fontSize: '28px',
+                  fontWeight: 'bold',
+                  color: '#111827',
+                  marginBottom: '4px',
                 }}
               >
-                <p>今天还没有记账</p>
+                {day}
               </div>
-            ) : (
-              transactions.map((transaction, index) => (
+              <div
+                style={{
+                  fontSize: '16px',
+                  color: '#4b5563',
+                  marginBottom: '12px',
+                }}
+              >
+                {monthDay}
+              </div>
+              <div
+                style={{
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  color: '#374151',
+                  marginBottom: '6px',
+                }}
+              >
+                *** 小票时光机 ***
+              </div>
+              <div
+                style={{
+                  fontSize: '12px',
+                  color: '#6b7280',
+                }}
+              >
+                {new Date().toLocaleDateString('zh-CN')}{' '}
+                {new Date().toLocaleTimeString('zh-CN', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </div>
+            </div>
+
+            {/* 分隔线 */}
+            <div
+              style={{
+                borderTop: '1px dashed #d1d5db',
+                margin: '12px 0',
+              }}
+            ></div>
+
+            {/* 交易列表 */}
+            <div
+              style={{
+                marginBottom: '24px',
+              }}
+            >
+              {transactions.length === 0 ? (
                 <div
-                  key={transaction.id}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: '8px 0',
-                    borderBottom: '1px dotted rgba(0,0,0,0.1)',
-                    fontSize: '14px',
+                    textAlign: 'center',
+                    padding: '24px 0',
+                    color: '#9ca3af',
                   }}
                 >
+                  <p>今天还没有记账</p>
+                </div>
+              ) : (
+                transactions.map((transaction, index) => (
                   <div
+                    key={transaction.id}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      flex: '1',
+                      padding: '8px 0',
+                      borderBottom: '1px dotted rgba(0,0,0,0.1)',
+                      fontSize: '14px',
                     }}
                   >
                     <div
                       style={{
-                        marginRight: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        flex: '1',
                       }}
                     >
-                      {getCategoryIcon(transaction.category)}
+                      <div
+                        style={{
+                          marginRight: '12px',
+                        }}
+                      >
+                        {getCategoryIcon(transaction.category)}
+                      </div>
+                      <div
+                        style={{
+                          fontWeight: '500',
+                          color: '#374151',
+                        }}
+                      >
+                        {transaction.category}
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        color: '#4b5563',
+                        margin: '0 16px',
+                        lineHeight: '28px',
+                      }}
+                    >
+                      x1
                     </div>
                     <div
                       style={{
                         fontWeight: '500',
-                        color: '#374151',
+                        color:
+                          transaction.type === 'income' ? '#059669' : '#dc2626',
+                        textAlign: 'right',
+                        minWidth: '80px',
+                        lineHeight: '28px',
                       }}
                     >
-                      {transaction.category}
+                      {transaction.type === 'income' ? '+' : '-'}¥
+                      {transaction.amount.toFixed(2)}
                     </div>
                   </div>
-                  <div
-                    style={{
-                      color: '#4b5563',
-                      margin: '0 16px',
-                      lineHeight: '28px',
-                    }}
-                  >
-                    x1
-                  </div>
-                  <div
-                    style={{
-                      fontWeight: '500',
-                      color:
-                        transaction.type === 'income' ? '#059669' : '#dc2626',
-                      textAlign: 'right',
-                      minWidth: '80px',
-                      lineHeight: '28px',
-                    }}
-                  >
-                    {transaction.type === 'income' ? '+' : '-'}¥
-                    {transaction.amount.toFixed(2)}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
 
-          {/* 今日支出 */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
+            {/* 今日支出 */}
             <div
               style={{
-                fontWeight: '500',
-                color: '#374151',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
               }}
             >
-              今日支出
-            </div>
-            <div
-              style={{
-                fontWeight: 'bold',
-                color: '#111827',
-              }}
-            >
-              ¥{todaySummary.expense.toFixed(2)}
-            </div>
-          </div>
-
-          {/* 虚线分隔 */}
-          <div
-            style={{
-              margin: '6px 0',
-              textAlign: 'center',
-              color: '#d1d5db',
-              fontSize: '10px',
-              letterSpacing: '2px',
-            }}
-          >
-            - - - - - - - - - - - - - - - -
-          </div>
-
-          {/* 今日结余 */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '6px',
-            }}
-          >
-            <div
-              style={{
-                fontSize: '16px',
-                fontWeight: '500',
-                color: '#374151',
-              }}
-            >
-              今日结余
-            </div>
-            <div
-              style={{
-                fontSize: '20px',
-                fontWeight: 'bold',
-                color:
-                  todaySummary.income - todaySummary.expense >= 0
-                    ? '#059669'
-                    : '#dc2626',
-              }}
-            >
-              {todaySummary.income - todaySummary.expense >= 0 ? '' : '-'}¥
-              {Math.abs(todaySummary.income - todaySummary.expense).toFixed(2)}
-            </div>
-          </div>
-
-          {/* 底部分隔线 */}
-          <div
-            style={{
-              position: 'relative',
-              borderTop: '1px dashed #d1d5db',
-              margin: '6px 0',
-            }}
-          ></div>
-          {/* 底部信息和二维码 */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              height: '60px',
-            }}
-          >
-            <div style={{ flex: '1', textAlign: 'center', color: '#9ca3af' }}>
-              <div style={{ fontSize: '12px', marginBottom: '4px' }}>
-                感谢您使用小票时光机
+              <div
+                style={{
+                  fontWeight: '500',
+                  color: '#374151',
+                }}
+              >
+                今日支出
               </div>
-              <div style={{ fontSize: '10px' }}>记录美好生活的每一笔</div>
+              <div
+                style={{
+                  fontWeight: 'bold',
+                  color: '#111827',
+                }}
+              >
+                ¥{todaySummary.expense.toFixed(2)}
+              </div>
             </div>
 
-            {/* 二维码 */}
+            {/* 虚线分隔 */}
             <div
               style={{
-                width: '56px',
-                height: '56px',
-                flexShrink: 0,
-                position: 'absolute',
-                right: '16px',
-                bottom: '16px',
+                margin: '6px 0',
+                textAlign: 'center',
+                color: '#d1d5db',
+                fontSize: '10px',
+                letterSpacing: '2px',
               }}
             >
-              <QRCodeSVG
-                value={
-                  typeof window !== 'undefined' ? window.location.href : ''
-                }
-                size={50}
-                level="L"
-                includeMargin={false}
-              />
+              - - - - - - - - - - - - - - - -
+            </div>
+
+            {/* 今日结余 */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '6px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '16px',
+                  fontWeight: '500',
+                  color: '#374151',
+                }}
+              >
+                今日结余
+              </div>
+              <div
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color:
+                    todaySummary.income - todaySummary.expense >= 0
+                      ? '#059669'
+                      : '#dc2626',
+                }}
+              >
+                {todaySummary.income - todaySummary.expense >= 0 ? '' : '-'}¥
+                {Math.abs(todaySummary.income - todaySummary.expense).toFixed(
+                  2,
+                )}
+              </div>
+            </div>
+
+            {/* 底部分隔线 */}
+            <div
+              style={{
+                position: 'relative',
+                borderTop: '1px dashed #d1d5db',
+                margin: '6px 0',
+              }}
+            ></div>
+            {/* 底部信息和二维码 */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                height: '60px',
+              }}
+            >
+              <div style={{ flex: '1', textAlign: 'center', color: '#9ca3af' }}>
+                <div style={{ fontSize: '12px', marginBottom: '4px' }}>
+                  感谢您使用小票时光机
+                </div>
+                <div style={{ fontSize: '10px' }}>记录美好生活的每一笔</div>
+              </div>
+
+              {/* 二维码 */}
+              <div
+                style={{
+                  width: '56px',
+                  height: '56px',
+                  flexShrink: 0,
+                  position: 'absolute',
+                  right: '16px',
+                  bottom: '16px',
+                }}
+              >
+                <QRCodeSVG
+                  value={
+                    typeof window !== 'undefined' ? window.location.href : ''
+                  }
+                  size={50}
+                  level="L"
+                  includeMargin={false}
+                />
+              </div>
             </div>
           </div>
         </div>

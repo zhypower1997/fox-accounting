@@ -8,10 +8,10 @@ interface BackButtonProps {
   onBack?: () => void;
 }
 
-export default function BackButton({ 
-  className = '', 
+export default function BackButton({
+  className = '',
   variant = 'default',
-  onBack 
+  onBack,
 }: BackButtonProps) {
   const router = useRouter();
 

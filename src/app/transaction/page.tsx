@@ -137,8 +137,8 @@ function TransactionDetailContent() {
       {/* 头部 */}
       <div className="bg-white shadow-sm p-4">
         <div className="max-w-md mx-auto relative">
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-            <BackButton />
+          <div className="absolute left-0 top-1/2 transform -translate-y-1/2">
+            <BackButton variant="minimal" />
           </div>
           <h1 className="text-xl font-bold text-center text-gray-900">
             {isEditing ? '编辑交易' : '交易详情'}
