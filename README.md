@@ -120,10 +120,8 @@ fox-accounting/
 
 本项目采用 MIT 许可证，详情请查看 LICENSE 文件。
 
-## 🤝 贡献
 
-欢迎提交 Issue 和 Pull Request 来帮助改进项目！
-
----
-
-*Made with ❤️ using Next.js*
+# 作品介绍
+你可以直接在手机或者电脑上像开一个应用一样打开一个APP，这个APP就是个记账本，你可以在里面记录你的收支情况。还可以生成海报进行分享。
+这里的图标均由我的另一个项目绘制，可以访问：https://github.com/zhypower1997/comate-canvas
+![alt text](image.png)
