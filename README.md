@@ -127,3 +127,5 @@ fox-accounting/
 ![alt text](image.png)
 
 该项目100%代码完全由文心快码生成。
+
+![alt text](image-1.png)
