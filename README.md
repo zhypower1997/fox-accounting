@@ -129,3 +129,6 @@ fox-accounting/
 该项目100%代码完全由文心快码生成。
 
 ![alt text](image-1.png)
+
+运行视频
+<video src="./luping.mov"></video>
